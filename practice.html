@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koil’ae Noir | The Charcoal Standard</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="uploaded:WhatsApp%20Image%202025-11-28%20at%2019.59.34_bd2438b2.jpg-18a431dc-7886-4fbc-9486-dc5b120241b4" type="image/jpeg">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        noir: '#050505',
+                        charcoal: '#1a1a1a',
+                        gunmetal: '#262626',
+                        ash: '#3f3f3f',
+                        stone: '#e0e0e0',
+                        gold: '#d4af37',
+                        pure: '#ffffff'
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Manrope"', 'sans-serif'],
+                    },
+                    letterSpacing: {
+                        ultra: '.25em',
+                    },
+                    height: {
+                        'screen-90': '90vh',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050505;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+        }
+        
+        /* Smooth Fade In */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1s ease-out, transform 1s ease-out;
+            will-change: opacity, visibility;
+        }
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        /* Image Hover Zoom */
+        .img-zoom-container {
+            overflow: hidden;
+        }
+        .img-zoom-container img {
+            transition: transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        .img-zoom-container:hover img {
+            transform: scale(1.06);
+        }
+
+        /* Accordion Transition */
+        .accordion-content {
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+        }
+        .accordion-content.active {
+            opacity: 1;
+        }
+
+        /* Text Selection */
+        ::selection {
+            background: #d4af37; /* Gold selection */
+            color: #000;
+        }
+    </style>
+</head>
+<body class="bg-noir text-stone font-sans antialiased">
+
+    <!-- Loading Screen -->
+    <div id="loader" class="fixed inset-0 bg-noir z-[100] flex justify-center items-center transition-opacity duration-1000">
+        <div class="text-center">
+            <h1 class="font-serif text-3xl italic tracking-ultra text-pure animate-pulse">KOIL’AE NOIR</h1>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-500 py-6 border-b border-transparent bg-noir/80 backdrop-blur-md">
+        <div class="max-w-[1400px] mx-auto px-6 flex justify-between items-center">
+            <!-- Mobile Menu -->
+            <button onclick="toggleMenu()" class="md:hidden text-stone hover:text-white">
+                <i class="ph ph-list text-2xl"></i>
+            </button>
+
+            <!-- Links (Left) -->
+            <div class="hidden md:flex space-x-12 text-[10px] uppercase tracking-ultra font-medium text-gray-400">
+                <a href="#" onclick="showHome()" class="hover:text-white transition duration-300">Shop</a>
+                <a href="#about" onclick="showHome()" class="hover:text-white transition duration-300">About</a>
+            </div>
+
+            <!-- Logo (Center) -->
+            <a href="#" onclick="showHome()" class="absolute left-1/2 transform -translate-x-1/2 hover:opacity-80 transition cursor-pointer">
+                <img src="uploaded:WhatsApp%20Image%202025-11-28%20at%2019.59.34_19143afa.jpg-a9e8b060-2836-4a5f-9df6-3d5e67d43fdd" alt="Koil’ae Noir Logo" class="h-12 object-contain">
+            </a>
+
+            <!-- Links (Right) -->
+            <div class="flex items-center space-x-8">
+                <div class="hidden md:flex space-x-12 text-[10px] uppercase tracking-ultra font-medium text-gray-400 mr-8">
+                    <a href="#journal" onclick="showHome()" class="hover:text-white transition duration-300">Journal</a>
+                    <a href="#contact" onclick="showHome()" class="hover:text-white transition duration-300">Contact</a>
+                </div>
+                <div class="flex items-center space-x-6 text-stone">
+                    <button class="hover:text-white transition"><i class="ph ph-magnifying-glass text-lg"></i></button>
+                    <button onclick="toggleCart()" class="relative hover:text-white transition group">
+                        <i class="ph ph-shopping-bag text-lg"></i>
+                        <span id="cart-badge" class="absolute -top-1 -right-1 h-1.5 w-1.5 bg-gold rounded-full opacity-0 transition group-hover:opacity-100"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 bg-noir z-40 transform -translate-x-full transition-transform duration-700 ease-in-out flex flex-col justify-center items-center space-y-8">
+        <button onclick="toggleMenu()" class="absolute top-6 left-6 text-stone">
+            <i class="ph ph-x text-2xl"></i>
+        </button>
+        <a href="#" onclick="showHome(); toggleMenu()" class="font-serif text-4xl italic text-stone hover:text-gold transition">The Collection</a>
+        <a href="#about" onclick="showHome(); toggleMenu()" class="font-serif text-4xl italic text-stone hover:text-gold transition">Our Story</a>
+        <a href="#journal" onclick="showHome(); toggleMenu()" class="font-serif text-4xl italic text-stone hover:text-gold transition">Journal</a>
+    </div>
+
+    <!-- Cart Drawer -->
+    <div id="cart-drawer" class="fixed inset-y-0 right-0 w-full md:w-[450px] bg-[#0f0f0f] z-[60] transform translate-x-full transition-transform duration-500 shadow-2xl border-l border-gunmetal flex flex-col">
+        <div class="p-8 border-b border-gunmetal flex justify-between items-center">
+            <h2 class="font-serif text-xl italic text-white">Your Cart</h2>
+            <button onclick="toggleCart()" class="text-stone hover:text-white"><i class="ph ph-x text-xl"></i></button>
+        </div>
+        <div id="cart-items" class="flex-1 p-8 flex flex-col justify-center items-center text-center space-y-4 overflow-y-auto">
+            <p class="text-sm text-gray-500 font-light">Your ritual is incomplete.</p>
+            <button onclick="toggleCart()" class="text-xs uppercase tracking-ultra border-b border-gray-600 pb-1 hover:border-white hover:text-white transition">Continue Shopping</button>
+        </div>
+        <div class="p-8 border-t border-gunmetal bg-noir">
+            <div class="flex justify-between mb-6 text-xs uppercase tracking-ultra text-gray-400">
+                <span>Subtotal</span>
+                <span id="cart-total" class="text-white">$0.00</span>
+            </div>
+            <button class="w-full bg-white text-noir py-4 text-[10px] uppercase tracking-ultra font-bold hover:bg-gold hover:text-white transition duration-500">
+                Proceed to Checkout
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT CONTAINER (HOME VIEW) -->
+    <div id="home-view">
+        
+        <!-- Hero Section -->
+        <header class="relative h-screen w-full overflow-hidden">
+            <div class="absolute inset-0 z-0">
+                <!-- Dark aesthetic texture background -->
+                <img src="https://images.unsplash.com/photo-1618331835717-801e976710b2?q=80&w=2500&auto=format&fit=crop" 
+                     alt="Charcoal Texture" 
+                     class="w-full h-full object-cover opacity-40 grayscale contrast-125">
+                <div class="absolute inset-0 bg-gradient-to-b from-noir/30 via-transparent to-noir"></div>
+            </div>
+
+            <div class="relative z-10 h-full flex flex-col justify-center items-center text-center px-4">
+                <div class="overflow-hidden mb-6">
+                    <span class="block text-[10px] md:text-xs uppercase tracking-[0.4em] text-gray-300 fade-in-up">Activated Charcoal Skincare</span>
+                </div>
+                <h1 class="font-serif text-5xl md:text-7xl lg:text-9xl text-white mb-8 leading-tight italic fade-in-up" style="animation-delay: 0.2s;">
+                    Pure. Minimal.<br>Effective.
+                </h1>
+                <a href="#collection" class="group relative overflow-hidden px-8 py-4 border border-stone/30 hover:border-stone transition duration-500 fade-in-up" style="animation-delay: 0.5s;">
+                    <span class="relative z-10 text-[10px] uppercase tracking-ultra group-hover:text-noir transition duration-500">Discover The Ritual</span>
+                    <div class="absolute inset-0 bg-white transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-in-out"></div>
+                </a>
+            </div>
+        </header>
+
+        <!-- ABOUT US SECTION -->
+        <section id="about" class="py-32 px-6 bg-noir relative overflow-hidden">
+            <!-- Decorative Line -->
+            <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-px h-32 bg-gradient-to-b from-transparent to-ash"></div>
+
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-24 fade-in-section">
+                    <span class="text-[10px] uppercase tracking-ultra text-gold mb-4 block">About Us</span>
+                    <h2 class="font-serif text-4xl md:text-6xl text-white leading-tight mb-8">
+                        Elevating the <br><span class="italic text-gray-500">Darker Side</span> of Beauty
+                    </h2>
+                    <p class="max-w-2xl mx-auto text-gray-400 font-light leading-relaxed">
+                        Koil’ae Noir is a minimalist luxury skincare brand built around one powerful ingredient—activated charcoal. We strip away the noise to deliver high-performance formulations that look premium, feel premium, and work.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
+                    <div class="relative fade-in-section delay-100">
+                        <div class="img-zoom-container aspect-[4/5] bg-gunmetal/30">
+                            <img src="https://images.unsplash.com/photo-1615396899839-0900fa4ea39d?q=80&w=1470&auto=format&fit=crop" 
+                                 alt="Luxury Unboxing Experience" 
+                                 class="w-full h-full object-cover opacity-90">
+                        </div>
+                        <div class="absolute -bottom-8 -right-8 bg-charcoal p-6 border border-ash hidden md:block max-w-xs">
+                            <p class="font-serif italic text-lg text-white mb-2">The Unboxing</p>
+                            <p class="text-xs text-gray-400 leading-relaxed">
+                                Every item is designed to purify and balance while maintaining a calm aesthetic. Magnetic closures, peel-reveal labels—luxury in every detail.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-16 fade-in-section delay-200">
+                        <div>
+                            <h3 class="font-serif text-2xl text-white mb-4 italic">The Mission</h3>
+                            <p class="text-sm text-gray-400 leading-7 font-light">
+                                Our mission is simple: make premium charcoal-based skincare accessible without compromising quality. We are launching with a small, refined set of products to validate demand and build trust before expanding into a complete charcoal-powered lineup.
+                            </p>
+                        </div>
+                        <div class="pt-8 border-t border-gunmetal">
+                            <p class="font-serif text-3xl text-white">"No noise, no clutter."</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- COLLECTION SECTION (Dynamic Grid) -->
+        <section id="collection" class="py-24 px-6 bg-[#0a0a0a] border-t border-gunmetal">
+            <div class="max-w-[1400px] mx-auto">
+                <div class="flex justify-between items-end mb-20 fade-in-section">
+                    <div>
+                        <span class="text-[10px] uppercase tracking-ultra text-gray-500 mb-2 block">The Launch Collection</span>
+                        <h2 class="font-serif text-4xl md:text-5xl text-white">Essential Noir</h2>
+                    </div>
+                    <div class="hidden md:block w-32 h-px bg-ash mb-4"></div>
+                </div>
+
+                <!-- Container to be populated by JS -->
+                <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-16">
+                    <!-- Products injected via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Ingredients / Philosophy Bar -->
+        <section class="py-20 px-6 bg-[#050505] border-t border-gunmetal">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-around items-center gap-12 text-center">
+                <div class="fade-in-section">
+                    <i class="ph ph-drop text-4xl text-gray-600 mb-4"></i>
+                    <h3 class="font-serif text-xl text-white italic mb-2">Activated Carbon</h3>
+                    <p class="text-xs text-gray-500 uppercase tracking-widest">Magnetizes impurities</p>
+                </div>
+                <div class="w-full md:w-px h-px md:h-16 bg-gunmetal"></div>
+                <div class="fade-in-section delay-100">
+                    <i class="ph ph-plant text-4xl text-gray-600 mb-4"></i>
+                    <h3 class="font-serif text-xl text-white italic mb-2">Tallow Rich</h3>
+                    <p class="text-xs text-gray-500 uppercase tracking-widest">Bio-identical Hydration</p>
+                </div>
+                <div class="w-full md:w-px h-px md:h-16 bg-gunmetal"></div>
+                <div class="fade-in-section delay-200">
+                    <i class="ph ph-shield-check text-4xl text-gray-600 mb-4"></i>
+                    <h3 class="font-serif text-xl text-white italic mb-2">Clean Formulas</h3>
+                    <p class="text-xs text-gray-500 uppercase tracking-widest">No Parabens. No Sulfates.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- END HOME VIEW -->
+
+
+    <!-- PRODUCT DETAIL VIEW (Hidden by default) -->
+    <div id="product-page" class="hidden min-h-screen bg-noir pt-32 pb-20">
+        <div class="max-w-[1400px] mx-auto px-6">
+            
+            <!-- Breadcrumb -->
+            <div class="flex items-center space-x-2 text-[10px] uppercase tracking-ultra text-gray-500 mb-12">
+                <a href="#" onclick="showHome()" class="hover:text-white transition">Home</a>
+                <span>/</span>
+                <a href="#" onclick="showHome()" class="hover:text-white transition">Collection</a>
+                <span>/</span>
+                <span id="p-breadcrumb-name" class="text-white">Product Name</span>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 xl:gap-24">
+                
+                <!-- Product Image (Left) -->
+                <div class="relative">
+                    <div class="aspect-[4/5] bg-gunmetal overflow-hidden relative group">
+                        <img id="p-image" src="" alt="Product" class="w-full h-full object-cover">
+                        <!-- Zoom Icon hint -->
+                        <div class="absolute bottom-6 right-6 text-white opacity-0 group-hover:opacity-100 transition duration-500">
+                            <i class="ph ph-magnifying-glass-plus text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Details (Right) -->
+                <div class="flex flex-col h-full">
+                    <div class="border-b border-ash pb-8 mb-8">
+                        <h1 id="p-title" class="font-serif text-4xl md:text-5xl text-white mb-2 italic">Product Name</h1>
+                        <p id="p-tagline" class="text-[10px] uppercase tracking-ultra text-gold mb-6">Tagline</p>
+                        <p id="p-price" class="font-serif text-2xl text-white mb-6">$0.00</p>
+                        
+                        <div class="flex gap-4">
+                            <button id="p-add-btn" class="flex-1 bg-white text-noir py-4 text-xs uppercase tracking-ultra font-bold hover:bg-gold hover:text-white transition duration-300">
+                                Add to Cart
+                            </button>
+                            <div class="w-14 border border-ash flex items-center justify-center text-white hover:border-white cursor-pointer">
+                                <i class="ph ph-heart text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-8 mb-12">
+                        <p id="p-desc" class="text-sm text-gray-400 leading-7 font-light">Description goes here.</p>
+                        
+                        <!-- Accordions -->
+                        <div class="space-y-4">
+                            <!-- Benefits -->
+                            <div class="border-b border-gunmetal">
+                                <button onclick="toggleAccordion('acc-benefits')" class="w-full py-4 flex justify-between items-center text-left focus:outline-none group">
+                                    <span class="text-xs uppercase tracking-ultra text-white group-hover:text-gold transition">Benefits</span>
+                                    <i class="ph ph-plus text-gray-500 group-hover:text-white transition" id="icon-acc-benefits"></i>
+                                </button>
+                                <div id="acc-benefits" class="accordion-content">
+                                    <p id="p-benefits" class="pb-4 text-xs text-gray-400 leading-relaxed font-light">Benefits content.</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Ingredients -->
+                            <div class="border-b border-gunmetal">
+                                <button onclick="toggleAccordion('acc-ingredients')" class="w-full py-4 flex justify-between items-center text-left focus:outline-none group">
+                                    <span class="text-xs uppercase tracking-ultra text-white group-hover:text-gold transition">Ingredients</span>
+                                    <i class="ph ph-plus text-gray-500 group-hover:text-white transition" id="icon-acc-ingredients"></i>
+                                </button>
+                                <div id="acc-ingredients" class="accordion-content">
+                                    <p id="p-ingredients" class="pb-4 text-xs text-gray-400 leading-relaxed font-light font-mono">Ingredients content.</p>
+                                </div>
+                            </div>
+
+                            <!-- How To Use -->
+                            <div class="border-b border-gunmetal">
+                                <button onclick="toggleAccordion('acc-usage')" class="w-full py-4 flex justify-between items-center text-left focus:outline-none group">
+                                    <span class="text-xs uppercase tracking-ultra text-white group-hover:text-gold transition">Ritual</span>
+                                    <i class="ph ph-plus text-gray-500 group-hover:text-white transition" id="icon-acc-usage"></i>
+                                </button>
+                                <div id="acc-usage" class="accordion-content">
+                                    <p id="p-usage" class="pb-4 text-xs text-gray-400 leading-relaxed font-light">Usage content.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Shipping Badge -->
+                    <div class="mt-auto bg-gunmetal/30 p-4 border border-ash/50 flex items-center gap-4">
+                        <i class="ph ph-package text-2xl text-gold"></i>
+                        <div>
+                            <p class="text-xs text-white uppercase tracking-wide">Complimentary Shipping</p>
+                            <p class="text-[10px] text-gray-500">On all orders over $150. Global delivery available.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Related Products -->
+            <div class="mt-32 pt-16 border-t border-gunmetal">
+                <h3 class="font-serif text-2xl text-white italic mb-12 text-center">Complete The Ritual</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8" id="related-products-grid">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Footer (Shared) -->
+    <footer id="contact" class="bg-noir py-16 px-6 border-t border-ash/20">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6">
+                <span class="font-serif text-2xl tracking-ultra uppercase text-white">Koil’ae Noir</span>
+                <p class="text-sm text-gray-500 font-light max-w-sm">
+                    Reimagining skincare through the lens of darkness. Pure ingredients, minimal design, luxury results.
+                </p>
+            </div>
+            <div class="flex flex-col md:flex-row md:justify-end gap-8 text-xs uppercase tracking-ultra text-gray-400">
+                <a href="#" class="hover:text-white transition">Instagram</a>
+                <a href="#" class="hover:text-white transition">TikTok</a>
+                <a href="#" class="hover:text-white transition">Email Us</a>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto mt-12 pt-8 border-t border-ash/10 text-[10px] text-gray-700 uppercase tracking-widest flex justify-between">
+            <p>&copy; 2024 Koil’ae Noir. All rights reserved.</p>
+            <p>Designed for Luxury.</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- DATA ---
+        const products = [
+            {
+                id: 'velve-noir',
+                name: 'Velvé Noir',
+                tagline: 'The Cream Cleanser',
+                price: 48,
+                image: 'https://images.unsplash.com/photo-1629198688000-71f23e745b6e?q=80&w=1780&auto=format&fit=crop',
+                description: 'A decadent, charcoal-infused cream cleanser that melts away impurities without stripping the skin\'s moisture barrier. Enriched with activated carbon and botanical oils, it transforms from a rich cream to a silky milk upon contact with water, leaving skin soft, supple, and perfectly prepped.',
+                benefits: 'Deeply cleanses pores while maintaining hydration. Removes makeup and pollutants. Softens skin texture.',
+                ingredients: 'Aqua, Prunus Amygdalus Dulcis (Sweet Almond) Oil, Glycerin, Activated Charcoal Powder, Cetearyl Alcohol, Simmondsia Chinensis (Jojoba) Seed Oil, Phenoxyethanol.',
+                usage: 'Apply 2-3 pumps onto dry skin. Massage in circular motions for 60 seconds. Add warm water to emulsify into a milk, then rinse clean. Use AM and PM.'
+            },
+            {
+                id: 'clarity-drip',
+                name: 'Clarity Drip',
+                tagline: 'The Balancing Toner',
+                price: 42,
+                image: 'https://images.unsplash.com/photo-1608248597279-f99d160bfbc8?q=80&w=2670&auto=format&fit=crop',
+                description: 'An ultra-fine mist that recalibrates your skin\'s pH after cleansing. Infused with liquid charcoal extracts and witch hazel, Clarity Drip tightens pores and eliminates residual oils, providing a clean slate for your serums.',
+                benefits: 'Balances skin pH. Tightens appearance of pores. Refreshes and hydrates instantly.',
+                ingredients: 'Aqua, Hamamelis Virginiana (Witch Hazel) Water, Aloe Barbadensis Leaf Juice, Charcoal Extract, Salicylic Acid, Lavandula Angustifolia Oil.',
+                usage: 'Hold bottle 8 inches from face and mist generously after cleansing. Can also be used throughout the day to refresh skin.'
+            },
+            {
+                id: 'ash-whip',
+                name: 'Ash Whip',
+                tagline: 'The Micro-Exfoliant',
+                price: 55,
+                image: 'https://images.unsplash.com/photo-1570194065650-d99fb4b8ccb0?q=80&w=2670&auto=format&fit=crop',
+                description: 'A whipped, airy exfoliant containing micro-fine volcanic ash and activated charcoal beads. Ash Whip gently buffs away dead skin cells, revealing a brighter, smoother complexion underneath without the harsh abrasion of traditional scrubs.',
+                benefits: 'Physical exfoliation without micro-tears. Promotes cell turnover. Brightens dull complexions.',
+                ingredients: 'Sucrose, Glycerin, Volcanic Ash, Charcoal Powder, Butyrospermum Parkii (Shea) Butter, Cocos Nucifera Oil, Vitamin E.',
+                usage: 'Use 2-3 times a week. Massage a small amount onto damp skin in gentle circular motions. Rinse thoroughly with warm water.'
+            },
+            {
+                id: 'cloud-mask',
+                name: 'Cloud Mask',
+                tagline: 'The Detox Treatment',
+                price: 65,
+                image: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=1887&auto=format&fit=crop',
+                description: 'Our best-selling hero. A fluffy, cloud-like clay mask that draws out deep-seated impurities. Housed in a gold-trimmed jar, this treatment utilizes Kaolin clay and bamboo charcoal to detoxify pores while calming inflammation.',
+                benefits: 'Draws out toxins and oil. Calms redness and inflammation. Mattifies oily skin.',
+                ingredients: 'Kaolin Clay, Bentonite Clay, Aqua, Bamboo Charcoal Powder, Tea Tree Leaf Oil, Chamomilla Recutita Flower Extract.',
+                usage: 'Apply a generous layer to clean, dry skin. Relax for 10-15 minutes until mask lightens in color. Rinse off with warm water and follow with Noir Dew.'
+            },
+            {
+                id: 'noir-dew',
+                name: 'Noir Dew',
+                tagline: 'The Restorative Essence',
+                price: 78,
+                image: 'https://images.unsplash.com/photo-1629198728305-564774164900?q=80&w=1780&auto=format&fit=crop',
+                description: 'A potent, concentrated essence delivered via a precision dropper. Noir Dew combines the purifying properties of charcoal with the hydration of Hyaluronic Acid, creating a dual-action serum that hydrates while keeping pores clear.',
+                benefits: 'Deep hydration. Plumps fine lines. Prevents future congestion.',
+                ingredients: 'Aqua, Sodium Hyaluronate (Hyaluronic Acid), Niacinamide, Charcoal Powder, Panthenol (Vitamin B5), Allantoin.',
+                usage: 'Dispense 3-4 drops into palms. Press gently into face and neck until fully absorbed. Follow with moisturizer.'
+            },
+            {
+                id: 'ember-silk',
+                name: 'Ember Silk',
+                tagline: 'Tallow + Charcoal Moisturizer',
+                price: 85,
+                image: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=1887&auto=format&fit=crop',
+                description: 'The ultimate barrier repair cream. Ember Silk fuses the bio-identical hydration of grass-fed tallow with the clarifying power of charcoal. It locks in moisture for 24 hours while neutralizing surface toxins.',
+                benefits: 'Intense, long-lasting moisture. Repairs skin barrier. Non-comedogenic hydration.',
+                ingredients: 'Grass-Fed Tallow, Jojoba Oil, Activated Charcoal, Squalane, Rosehip Seed Oil, Frankincense Essential Oil.',
+                usage: 'Warm a pea-sized amount between fingertips to melt the tallow. Press into skin as the final step of your nighttime routine.'
+            },
+            {
+                id: 'glowguard',
+                name: 'Glowguard',
+                tagline: 'The Invisible Shield',
+                price: 45,
+                image: 'https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=1887&auto=format&fit=crop',
+                description: 'A mineral SPF that defies expectations. Glowguard offers broad-spectrum protection without the white cast, thanks to a unique micronized charcoal tint that blends universally into all skin tones while absorbing excess oil.',
+                benefits: 'SPF 40 Broad Spectrum protection. No white cast. Semi-matte finish.',
+                ingredients: 'Zinc Oxide (Non-Nano), Aqua, Caprylic/Capric Triglyceride, Charcoal Powder, Vitamin C, Iron Oxides.',
+                usage: 'Apply liberally 15 minutes before sun exposure. Reapply every 2 hours. Can be worn under makeup.'
+            }
+        ];
+
+        // --- APP LOGIC ---
+
+        // Initialize Home Grid
+        function initGrid() {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = products.map(p => `
+                <div class="group cursor-pointer fade-in-section" onclick="openProductPage('${p.id}')">
+                    <div class="aspect-[3/4] bg-gunmetal relative mb-6 overflow-hidden">
+                        <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover opacity-90 group-hover:scale-105 transition duration-700">
+                        ${p.id === 'cloud-mask' ? '<div class="absolute top-4 right-4 bg-gold text-black text-[9px] uppercase font-bold px-2 py-1 z-10">Best Seller</div>' : ''}
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition duration-500 flex items-center justify-center">
+                            <span class="text-white text-xs uppercase tracking-ultra border-b border-white pb-1">View Details</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-serif text-lg text-white">${p.name}</h3>
+                            <p class="text-[10px] uppercase tracking-widest text-gray-500 mt-1">${p.tagline}</p>
+                        </div>
+                        <span class="font-serif italic text-gray-300">$${p.price}</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Re-trigger observer for new elements
+            document.querySelectorAll('.fade-in-section').forEach(el => observer.observe(el));
+        }
+
+        // Routing Views
+        const homeView = document.getElementById('home-view');
+        const productView = document.getElementById('product-page');
+
+        function showHome() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            productView.classList.add('hidden');
+            homeView.classList.remove('hidden');
+            // Re-run animations if needed, or simple display toggle
+        }
+
+        function openProductPage(id) {
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+
+            // Populate Data
+            document.getElementById('p-breadcrumb-name').innerText = product.name;
+            document.getElementById('p-image').src = product.image;
+            document.getElementById('p-title').innerText = product.name;
+            document.getElementById('p-tagline').innerText = product.tagline;
+            document.getElementById('p-price').innerText = `$${product.price}`;
+            document.getElementById('p-desc').innerText = product.description;
+            document.getElementById('p-benefits').innerText = product.benefits;
+            document.getElementById('p-ingredients').innerText = product.ingredients;
+            document.getElementById('p-usage').innerText = product.usage;
+            
+            // Update Add to Cart Button Logic
+            const btn = document.getElementById('p-add-btn');
+            btn.onclick = () => addToCart(product.name, product.price);
+
+            // Populate Related Products (Random 3 excluding current)
+            const related = products.filter(p => p.id !== id).sort(() => 0.5 - Math.random()).slice(0, 3);
+            const relatedGrid = document.getElementById('related-products-grid');
+            relatedGrid.innerHTML = related.map(p => `
+                 <div class="group cursor-pointer" onclick="openProductPage('${p.id}')">
+                    <div class="aspect-[3/4] bg-gunmetal relative mb-4 overflow-hidden">
+                        <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover opacity-90 group-hover:scale-105 transition duration-700">
+                    </div>
+                    <div>
+                        <h3 class="font-serif text-md text-white">${p.name}</h3>
+                        <span class="font-serif italic text-sm text-gray-400">$${p.price}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            // Switch View
+            homeView.classList.add('hidden');
+            productView.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'instant' });
+            
+            // Reset accordions
+            document.querySelectorAll('.accordion-content').forEach(acc => {
+                acc.style.maxHeight = null;
+                acc.classList.remove('active');
+            });
+            document.querySelectorAll('.ph-minus').forEach(icon => {
+                icon.classList.remove('ph-minus');
+                icon.classList.add('ph-plus');
+            });
+        }
+
+        // Accordion Logic
+        function toggleAccordion(id) {
+            const content = document.getElementById(id);
+            const icon = document.getElementById(`icon-${id}`);
+            
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+                content.classList.remove('active');
+                icon.classList.remove('ph-minus');
+                icon.classList.add('ph-plus');
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+                content.classList.add('active');
+                icon.classList.remove('ph-plus');
+                icon.classList.add('ph-minus');
+            }
+        }
+
+        // Cart Logic (Shared)
+        const cartDrawer = document.getElementById('cart-drawer');
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartTotalDisplay = document.getElementById('cart-total');
+        const cartBadge = document.getElementById('cart-badge');
+        let cart = [];
+
+        function toggleCart() {
+            if (cartDrawer.classList.contains('translate-x-full')) {
+                cartDrawer.classList.remove('translate-x-full');
+            } else {
+                cartDrawer.classList.add('translate-x-full');
+            }
+        }
+
+        function addToCart(name, price) {
+            cart.push({ name, price });
+            updateCartDisplay();
+            if (cartDrawer.classList.contains('translate-x-full')) {
+                cartDrawer.classList.remove('translate-x-full');
+            }
+        }
+
+        function updateCartDisplay() {
+            if (cart.length > 0) {
+                cartBadge.classList.remove('opacity-0');
+                cartItemsContainer.innerHTML = cart.map((item, index) => `
+                    <div class="flex justify-between items-center w-full mb-4 border-b border-gray-800 pb-2">
+                        <div class="text-left">
+                            <p class="font-serif text-white italic text-lg">${item.name}</p>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="text-xs text-gray-300 uppercase tracking-widest">$${item.price}</span>
+                            <button onclick="removeFromCart(${index})" class="text-gray-600 hover:text-red-500"><i class="ph ph-trash"></i></button>
+                        </div>
+                    </div>
+                `).join('');
+                cartItemsContainer.classList.remove('justify-center', 'items-center');
+            } else {
+                cartBadge.classList.add('opacity-0');
+                cartItemsContainer.innerHTML = `
+                    <p class="text-sm text-gray-500 font-light mt-auto mb-auto">Your ritual is incomplete.</p>
+                    <button onclick="toggleCart()" class="text-xs uppercase tracking-ultra border-b border-gray-600 pb-1 hover:border-white hover:text-white transition mt-4">Continue Shopping</button>
+                `;
+                cartItemsContainer.classList.add('justify-center', 'items-center');
+            }
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            cartTotalDisplay.innerText = `$${total.toFixed(2)}`;
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartDisplay();
+        }
+
+        // Initialization
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            loader.style.opacity = '0';
+            setTimeout(() => {
+                loader.style.display = 'none';
+            }, 1000);
+            
+            initGrid();
+        });
+
+        // Intersection Observer for Fade-in Animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in-section, .fade-in-up').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Sticky Navbar
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-noir/95', 'backdrop-blur-sm', 'border-ash/30', 'py-4');
+                navbar.classList.remove('py-6');
+            } else {
+                navbar.classList.remove('bg-noir/95', 'backdrop-blur-sm', 'border-ash/30', 'py-4');
+                navbar.classList.add('py-6');
+            }
+        });
+
+        // Mobile Menu Toggle logic
+        const mobileMenu = document.getElementById('mobile-menu');
+        function toggleMenu() {
+            if (mobileMenu.classList.contains('-translate-x-full')) {
+                mobileMenu.classList.remove('-translate-x-full');
+            } else {
+                mobileMenu.classList.add('-translate-x-full');
+            }
+        }
+
+        // Add CSS keyframes for fade in up
+        document.head.insertAdjacentHTML('beforeend', `
+            <style>
+                @keyframes fadeInUp {
+                    from { opacity: 0; transform: translateY(30px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .fade-in-up {
+                    opacity: 0;
+                    animation: fadeInUp 1s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+                }
+            </style>
+        `);
+    </script>
+</body>
+</html>
